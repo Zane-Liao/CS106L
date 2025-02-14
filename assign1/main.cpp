@@ -25,9 +25,9 @@ const std::string COURSES_NOT_OFFERED_PATH = "student_output/courses_not_offered
  * Hint: Remember what types C++ streams work with?!
  */
 struct Course {
-  /* STUDENT TODO */ title;
-  /* STUDENT TODO */ number_of_units;
-  /* STUDENT TODO */ quarter;
+  std::string title;
+  std::string number_of_units;
+  std::string quarter;
 };
 
 /**
@@ -58,8 +58,21 @@ struct Course {
  * @param filename The name of the file to parse.
  * @param courses  A vector of courses to populate.
  */
-void parse_csv(std::string filename, std::vector<Course> courses) {
+void parse_csv(std::string filename, std::vector<Course>& courses) {
   /* (STUDENT TODO) Your code goes here... */
+  std::ifstream ifs_courses(filename); // create and open
+
+  if (!ifs_courses.is_open()) {
+    std::cerr << "This file open failed." << filename << std::endl;
+  }
+
+  std::string line;
+  while (std::getline(ifs_courses, line)) {
+    std::vector<std::string> parts = split(line, ',');
+    Course course { parts[0], parts[1], parts[2] };
+    courses.push_back(course);
+  }
+  ifs_courses.close();
 }
 
 /**
@@ -82,6 +95,19 @@ void parse_csv(std::string filename, std::vector<Course> courses) {
  */
 void write_courses_offered(std::vector<Course> all_courses) {
   /* (STUDENT TODO) Your code goes here... */
+  std::ofstream ofs_all_courses("student_output/courses_offered.csv", std::ios::trunc);
+
+  for (const Course& course : all_courses) {
+    if (ofs_all_courses.is_open() && course.quarter != "null") {
+      ofs_all_courses << course.title << "," << course.number_of_units << "," << course.quarter << std::endl;
+    }
+  }
+  ofs_all_courses.close();
+
+  Course course;
+  if (course.quarter == "null") {
+    delete_elem_from_vector(all_courses, course);
+  }
 }
 
 /**
@@ -99,6 +125,20 @@ void write_courses_offered(std::vector<Course> all_courses) {
  */
 void write_courses_not_offered(std::vector<Course> unlisted_courses) {
   /* (STUDENT TODO) Your code goes here... */
+  std::ofstream ofs_all_courses("student_output/courses_not_offered.csv", std::ios::trunc);
+
+  ofs_all_courses << "Title" << "," << "Number of Units" << "," << "Quarter" << std::endl;
+  for (const Course& course : unlisted_courses) {
+    if (ofs_all_courses.is_open() && course.quarter == "null") {
+      ofs_all_courses << course.title << "," << course.number_of_units << "," << course.quarter << std::endl;
+    }
+  }
+  ofs_all_courses.close();
+
+  Course course;
+  if (course.quarter != "null") {
+    delete_elem_from_vector(unlisted_courses, course);
+  }
 }
 
 int main() {
@@ -109,10 +149,11 @@ int main() {
   parse_csv("courses.csv", courses);
 
   /* Uncomment for debugging... */
-  // print_courses(courses);
+  print_courses(courses);
 
   write_courses_offered(courses);
   write_courses_not_offered(courses);
 
   return run_autograder();
+  
 }
