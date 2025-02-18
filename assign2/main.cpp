@@ -55,7 +55,15 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+  std::queue<const std::string*> result;
 
+  for (const auto& student : students) {
+    if (student == name) {
+      result.push(&student);
+    }
+  }
+  
+  return result;
 }
 
 /**
@@ -70,6 +78,24 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
+  // Others Solution
+  if (matches.empty()) {
+    return "NO MATCHES FOUND.";
+  }
+
+  const std::string* match = nullptr;
+  size_t min_length = 0;
+  while (!matches.empty()) {
+    const std::string* current_match = matches.front();
+
+    if (min_length < current_match->length()) {
+      min_length = current_match->length();
+      match = current_match;
+    }
+    matches.pop();
+  }
+
+  return match ? *match : "NO MATCHES FOUND.";
 }
 
 /* #### Please don't remove this line! #### */
