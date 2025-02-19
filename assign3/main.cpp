@@ -14,6 +14,7 @@
 #include <string>
 
 #include "sandbox.cpp"
+#include "class.h"
 
 int run_autograder() {
   auto run_program = [](std::string program, std::initializer_list<std::string> args,
