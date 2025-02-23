@@ -14,20 +14,30 @@ public:
   std::string get_name() const;
   size_t size() const;
   void set_friend(size_t index, const std::string& name);
-  friend std::ostream& operator<<(std::ostream& os, const User& u);
-
+  
   /** 
    * STUDENT TODO:
    * Your custom operators and special member functions will go here!
    */
-  ~User();
+  // friend function -> use public and private 
+  friend std::ostream& operator<<(std::ostream& os, const User& u);
+  // Special Member Function
+  // Destructor
+  ~User(); 
+  // Copy Constructor
   User(const User& user);
-  User& User::operator=(const User& user);
-  User::User(User&& user) noexcept;
-  User& User::operator=(User&& user) noexcept;
-  User& User::operator+=(const User& user);
-  bool User::operator<(const User& user) const;
+  // Copy Assignment Operator
+  User& operator=(const User& user);
+  // Move Constructor
+  User(User&& user) = delete;
+  // Move Assignment Operator
+  User& operator=(User&& user) = delete;
+  // Object += Another object, Another Object += Object
+  User& operator+=(User& user);
+  // Object.size() (<,>,=) Another Object.size()
+  bool operator<(const User& user) const;
 
+  // Member element 
 private:
   std::string _name;
   std::string* _friends;
