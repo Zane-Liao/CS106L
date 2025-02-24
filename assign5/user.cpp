@@ -78,58 +78,95 @@ operator<<(std::ostream& os, const User& u) {
   return os;
 }
 
-// 
+// 2. 
+
+// Drop Function 
 User::~User() {
   delete[] _friends;
 }
 
-// 
-User::User(const User& user) : _size(user._size) {
-  _friends = new std::string[_size];
-  for (int i = 0; i < _size; i++) {
+// Copy -> Object
+User::User(const User& user) : _capacity(user._capacity) {
+  _size = user._size;
+  _capacity = user._capacity;
+  _name = user._name;
+  _friends = new std::string[_capacity];
+  for (size_t i = 0; i < _size; i++) {
     _friends[i] = user._friends[i];
   }
 }
 
-//
+// Object Copy Another Object
 User& User::operator=(const User& user) {
-  if (this != &user) {
-    _name = user._name;
-    _friends = user._friends;
-    _size = user._size;
-  }
-  return *this;
-}
-
-// 
-User::User(User&& user) noexcept : 
-_name(user._name), _friends(user._friends), 
-_size(user._size), _capacity(user._capacity)
-{
-  _name = 
-  _friends = 
-  _size = 
-}
-
-// 
-User& User::operator=(User&& user) noexcept
-{
   if (this != &user) {
     delete[] _friends;
     _name = user._name;
-    _friends = user._friends;
+    _friends = new std::string[_capacity];
     _size = user._size;
     _capacity = user._capacity;
-    user._friends = nullptr;
-    user._size = 0;
+    
+    for (size_t i = 0; i < _size; ++i) {
+      _friends[i] = user._friends[i];
+    }
+
+  }
+
+  return *this;
+}
+
+/**
+ * If you not prevent, Please check out ---> user.h
+ *  pop("= delete"), push("noexcept") 
+ */
+
+// Prevent 
+// User::User(User&& user) noexcept 
+// {
+//   _name = user._name;
+//   _friends = user._friends;
+//   _size = user._size;
+//   _capacity = user._capacity;
+
+//   user._name = "";
+//   user._friends = nullptr; 
+//   user._size = 0;
+//   user._capacity = 0;
+// }
+
+// Prevent
+// User& User::operator=(User&& user) noexcept
+// {
+//   if (this != &user) {
+//     delete[] _friends;
+//     _name = user._name;
+//     _friends = user._friends;
+//     _size = user._size;
+//     _capacity = user._capacity;
+
+//     user._name = "";
+//     user._friends = nullptr;
+//     user._size = 0;
+//     user._capacity = 0;
+//   }
+
+//   return *this;
+// }
+
+
+// 3.
+User& User::operator+=(User& user) {
+  if (user._name != _name) {
+    add_friend(user._name);
+    user.add_friend(_name);
   }
   return *this;
 }
 
-User& User::operator+=(const User& user) {
-
-}
-
-User& User::operator<(const User& user) const {
-
+// "<" and ">" std::string
+bool User::operator<(const User& user) const {
+  if (_name < user._name) {
+    return true;
+  } else {
+    return false;
+  }
 }
