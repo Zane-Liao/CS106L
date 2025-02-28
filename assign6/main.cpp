@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <type_traits>
 #include <vector>
+#include <optional>
+#include <iostream>
+#include <functional>
 
 /** STUDENT_TODO: You will need to include a relevant header file here! */
 
@@ -52,11 +55,19 @@ public:
    * @param course_title The title of the course to find.
    * @return You will need to figure this out!
    */
-  FillMeIn find_course(std::string course_title)
+  std::optional<Course> find_course(std::string course_title)
   {
     /* STUDENT_TODO: Implement this method! You will need to change the return
      * type. */
-  }
+    // course_title -> CourseDataBase.Object(courses) find course <- members
+    // courses.iter(), every one elements
+    for (auto& course : courses) {
+      if (course_title == course.title) {
+        return course;
+      }
+    }
+    return std::nullopt;
+}
 
 private:
   std::vector<Course> courses;
@@ -74,20 +85,23 @@ main(int argc, char* argv[])
 
   if (argc == 2) {
     CourseDatabase db("autograder/courses.csv");
-    auto course = db.find_course(argv[1]);
+    std::optional<Course> course = db.find_course(argv[1]); // 
     
     /******************************************************** 
     STUDENT_TODO: Populate the output string with the right information to print
     Please pay special attention to the README here
     ********************************************************/
-
-    std::string output = /* STUDENT_TODO */
+  if (course.has_value()) {
+  std::cout << "Found course: " << course->title << ","
+            << course->number_of_units << "," << course->quarter << "\n";
+  } else {
+    std::cout << "Course not found.\n";
+  }
 
     /********************************************************
      DO NOT MODIFY ANYTHING BELOW THIS LINE PLEASE
     ********************************************************/
-
-    std::cout << output << std::endl;
+   
     return 0;
   }
   
