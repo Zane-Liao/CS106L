@@ -85,23 +85,24 @@ main(int argc, char* argv[])
 
   if (argc == 2) {
     CourseDatabase db("autograder/courses.csv");
+
     std::optional<Course> course = db.find_course(argv[1]); // 
     
     /******************************************************** 
     STUDENT_TODO: Populate the output string with the right information to print
     Please pay special attention to the README here
     ********************************************************/
+
   if (course.has_value()) {
   std::cout << "Found course: " << course->title << ","
             << course->number_of_units << "," << course->quarter << "\n";
   } else {
     std::cout << "Course not found.\n";
   }
-
     /********************************************************
      DO NOT MODIFY ANYTHING BELOW THIS LINE PLEASE
     ********************************************************/
-   
+    std::cout << output << std::endl;
     return 0;
   }
   

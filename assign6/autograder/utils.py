@@ -68,6 +68,11 @@ def _install_requirements():
 
     # pip might need to be updated for packages to install, so let's make sure
     def check_pip_update():
+<<<<<<< HEAD
+=======
+        # Ensure pip is installed
+        subprocess.run([sys.executable, "-m", "ensurepip", "--default-pip"], stdout=subprocess.DEVNULL)
+>>>>>>> upstream/main
         result = subprocess.run(
             [sys.executable, "-m", "pip", "list", "--outdated"],
             stdout=subprocess.PIPE,
