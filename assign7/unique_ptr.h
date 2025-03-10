@@ -15,7 +15,7 @@ template <typename T, typename Deleter = std::default_delete<T>> // c++ library 
 class unique_ptr {
 private:
   /* STUDENT TODO: What data must a unique_ptr keep track of? */
-  T* ptr;
+  T* _ptr;
   Deleter deleter;
 public:
   /**
@@ -23,43 +23,35 @@ public:
    * @param ptr The pointer to manage.
    * @note You should avoid using this constructor directly and instead use `make_unique()`.
    */
-  unique_ptr(T* ptr) {
-    /* STUDENT TODO: Implement the constructor */
-    
-  }
+  unique_ptr(T* ptr) noexcept : _ptr(ptr) {}
 
   /**
    * @brief Constructs a new `unique_ptr` from `nullptr`.
    */
-  unique_ptr(std::nullptr_t) {
-    /* STUDENT TODO: Implement the nullptr constructor */
-    return nullptr_t;
-  }
+  unique_ptr(std::nullptr_t) : _ptr(nullptr) {}
 
   /**
    * @brief Constructs an empty `unique_ptr`.
    * @note By default, a `unique_ptr` points to `nullptr`.
    */
-  unique_ptr() : unique_ptr(nullptr) {
-    
-  }
+  unique_ptr() : unique_ptr(nullptr) {}
 
   /**
    * @brief Dereferences a `unique_ptr` and returns a reference to the object.
    * @return A reference to the object.
    */
-  T& operator*() {
+  T& operator*() noexcept {
     /* STUDENT TODO: Implement the dereference operator */
-    return *ptr;
+    return *_ptr;
   }
 
   /**
    * @brief Dereferences a `unique_ptr` and returns a const reference to the object.
    * @return A const reference to the object.
    */
-  const T& operator*() const {
+  const T& operator*() const noexcept {
     /* STUDENT TODO: Implement the dereference operator (const) */
-
+    return *_ptr;
   }
 
   /**
@@ -67,9 +59,9 @@ public:
    * @note This allows for accessing the members of the managed object through the `->` operator.
    * @return A pointer to the object.
    */
-  T* operator->() {
+  T* operator->() noexcept {
     /* STUDENT TODO: Implement the arrow operator */
-    return ptr;
+    return _ptr;
   }
 
   /**
@@ -77,9 +69,9 @@ public:
    * @note This allows for accessing the members of the managed object through the `->` operator.
    * @return A const pointer to the object.
    */
-  const T* operator->() const {
+  const T* operator->() const noexcept {
     /* STUDENT TODO: Implement the arrow operator */
-    
+    return _ptr;
   }
 
   /**
@@ -87,8 +79,9 @@ public:
    * @note This allows us to use a `unique_ptr` inside an if-statement.
    * @return `true` if the `unique_ptr` is non-null, `false` otherwise.
    */
-  operator bool() const {
+  operator bool() const noexcept {
     /* STUDENT TODO: Implement the boolean conversion operator */
+    return _ptr != nullptr;
   }
 
   /** STUDENT TODO: In the space below, do the following:
@@ -98,24 +91,27 @@ public:
    * - Implement the move constructor
    * - Implement the move assignment operator
    */
-  ~unique_ptr() {
-    if (ptr) deleter(ptr);
+  ~unique_ptr() noexcept {
+    deleter(_ptr);
   }
 
-  unique_ptr(const unique_ptr& other) {
-    deleter();
-  }
+  unique_ptr(const unique_ptr& other) = delete;
 
-  unique_ptr& operator=(const unique_ptr& other) {
-    deleter();
-  }
+  unique_ptr& operator=(const unique_ptr& other) = delete;
 
   unique_ptr(unique_ptr&& other) {
-    std::move()
+    _ptr = std::move(other._ptr);
+    other._ptr = nullptr;
   }
 
-  unique_ptr& operator=(unique_ptr&& other) {
-    
+  unique_ptr& operator=(unique_ptr&& other) noexcept {
+    if (this != &other) {
+      deleter(_ptr);
+      _ptr = other._ptr;
+      other._ptr = nullptr;
+    }
+
+    return *this;
   }
 };
 
